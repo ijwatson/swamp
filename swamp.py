@@ -1,8 +1,7 @@
->#!/usr/bin/env python2
+#!/usr/bin/env python2
 
 import os
 from bottle import Bottle, run, static_file, request, template, redirect
-from HTMLTags import*
 import sqlite3
 import time
 
@@ -141,15 +140,6 @@ def login():
 
 def summTable():
     pass
-
-@app.route('/view')
-def view():
-    html=HTML()
-    head = HEAD()
-    body = BODY()
-    
-    html += head + body
-    return html
 
 app.secret_key = 'alfbadnbjaetbea'
 if __name__ == "__main__":
