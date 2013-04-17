@@ -2,7 +2,7 @@ import sqlite3
 import os
 import time
 
-dbDefault = "db"
+dbDefault = "/sydpp/iwatson/db"
 
 # length of a measure in seconds
 measureLength = 30 * 60
