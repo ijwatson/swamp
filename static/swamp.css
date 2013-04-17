@@ -1,0 +1,22 @@
+#iswork {
+    background:#00ff00;
+}
+
+.active {
+    background:#33ff33;
+}
+
+.inactive {
+    background:#ff3333;
+}
+
+td {
+    padding-left:10px;
+    padding-right:10px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+table {
+    border-spacing: 0;
+}
