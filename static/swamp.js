@@ -66,7 +66,7 @@ document.getElementById("login").addEventListener("submit", function () {
 	currentData = JSON.parse(msg.data);
 	// if status gets reset, update controls
 	if (currentData.status[name] == 0 && !document.getElementById("nowork").value) {
-	    document.getElementById("nowork").click();
+	    $("#nowork").click();
 	}
 	updateView();
     };
