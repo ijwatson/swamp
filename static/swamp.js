@@ -10,7 +10,7 @@ function updateView () {
     console.log("data updated");
     $("#data").empty();
     $("#data").append("<table id='tab'></table>");
-    $("#tab").append("<tr><th>Name<th>Today<th>All<th>Current<th>Status");
+    $("#tab").append("<tr><th>Name<th>Today<th>All<th>Current");
     var table = $("#tab");
     var data = currentData;
     for (var i = 0; i < data.names.length; ++i) {
@@ -18,8 +18,7 @@ function updateView () {
 		     '"><td>'+data.names[i]+'<td>' +
 		     data.today[data.names[i]] + '<td>' +
 		     data.measures[data.names[i]] + '<td id="'+data.names[i]+'-current">' +
-		     tick2ms(data.current[data.names[i]]) +'<td>' +
-		     data.status[data.names[i]]);
+		     tick2ms(data.current[data.names[i]]));
     }
 }
 
