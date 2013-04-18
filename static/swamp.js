@@ -65,8 +65,11 @@ document.getElementById("login").addEventListener("submit", function () {
     subscription.onmessage = function (msg) {
 	currentData = JSON.parse(msg.data);
 	// if status gets reset, update controls
-	if (currentData.status[name] == 0 && !document.getElementById("nowork").value) {
-	    $("#nowork").click();
+	console.log(currentData.status[name]);
+	if (currentData.status[name] == 0) {
+	    console.log("inside");
+	    document.getElementById('iswork').checked = false;
+	    document.getElementById('nowork').checked = true;
 	}
 	updateView();
     };

@@ -67,6 +67,7 @@ def login():
     if name not in db.getNames():
         db.addUser(name)
         nupdates += 1
+    return ""
 
 @app.route('/')
 def index():
