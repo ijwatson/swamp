@@ -2,10 +2,10 @@ import sqlite3
 import os
 import time
 
-dbDefault = "/sydpp/iwatson/db"
+dbDefault = "db"
 
 # length of a measure in seconds
-measureLength = 30 * 60
+measureLength = 30
 
 # since the last global check
 updateCount = 0
@@ -46,10 +46,11 @@ class DB:
             newTime = 1 + crnt[0][0]
         else:
             newTime = 1
-            self.db.execute('insert into current values (?,?,?)', (self.userId(name),0,1))
+            self.db.execute('insert into current values (?,?,?,?)', (self.userId(name),0,int(status),time.ctime()))
         if newTime > measureLength:
+            stime = self.db.execute('select startTime from current where userid=?',(self.userId(name),)).fetchone()[0]
             self.db.execute('delete from current where userId=?', (self.userId(name),))
-            self.db.execute('insert into measures values (?,?,?,?)', (None,self.userId(name),time.ctime(time.time()-measureLength),time.ctime()))
+            self.db.execute('insert into measures values (?,?,?,?)', (None,self.userId(name),stime,time.ctime()))
             self.db.commit()
             return True
         else:
@@ -77,7 +78,7 @@ class DB:
                 self.db.execute('update current set status=? where userId=?', (int(status), self.userId(name),))
             else:
                 print "not in curr", name
-                self.db.execute('insert into current values (?,?,?)', (self.userId(name),0,int(status)))
+                self.db.execute('insert into current values (?,?,?,?)', (self.userId(name),0,int(status),time.ctime()))
             self.db.commit()
         except:
             print "No update", name, status
@@ -87,9 +88,11 @@ class DB:
         self.db.commit()
         updates = False
         for name in self.getNames():
+            uid = self.userId(name)
             if self.currentTime(name) > measureLength:
-                self.db.execute('delete from current where userId=?', (self.userId(name),))
-                self.db.execute('insert into measures values (?,?,?,?)', (None,self.userId(name),time.ctime(time.time()-measureLength),time.ctime()))
+                stime = self.db.execute('select startTime from current where userid=?',(uid,)).fetchone()[0]
+                self.db.execute('delete from current where userId=?', (uid,))
+                self.db.execute('insert into measures values (?,?,?,?)', (None,uid,stime,time.ctime()))
                 self.db.commit()
                 updates = True
         return updates
