@@ -62,6 +62,7 @@ def status():
 
 @app.route('/login', methods=['POST'])
 def login():
+    global nupdates
     name = request.args.get("name")
     db = DB()
     if name not in db.getNames():
@@ -69,6 +70,34 @@ def login():
         nupdates += 1
     return ""
 
+def admin_clear():
+    global nupdates
+    db = DB()
+    db.clearCurrent()
+    nupdates += 1
+
+def admin_add(name, start, end):
+    global nupdates
+    db = DB()
+    db.addMeasure(name, start.strip(), end.strip())
+    nupdates += 1
+    
+@app.route('/admin', methods=['POST'])
+def admin_post():
+    func = request.args.get("func")
+    print 'Recieved message', func
+    if func == 'clear':
+        admin_clear()
+    elif func == 'add':
+        admin_add(request.args.get("name"), request.args.get("start"), request.args.get("end"))
+    else:
+        print "Unknown admin command:", func
+    return ""
+    
+@app.route('/admin', methods=['GET'])
+def admin_main():
+    return render_template('admin.html')
+    
 @app.route('/')
 def index():
     return render_template('main.html')
@@ -87,7 +116,7 @@ def timer():
     dbUpdate = DB().statusTick()
     if dbUpdate:
         nupdates += 1
-    
+
 if __name__ == '__main__':
     # initial setup. clear the current status'
     db = DB()

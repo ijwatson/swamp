@@ -2,10 +2,10 @@ import sqlite3
 import os
 import time
 
-dbDefault = "/sydpp/iwatson/db"
+dbDefault = "db"
 
 # length of a measure in seconds
-measureLength = 30 * 60
+measureLength = 3
 
 # since the last global check
 updateCount = 0
@@ -103,3 +103,11 @@ class DB:
     def nToday(self, name):
         times = [a[0] for a in self.db.execute('select startTime from measures where userId=?', (self.userId(name),)).fetchall()]
         return len(filter(istoday, times))
+
+    def clearCurrent(self):
+        self.db.execute('delete from current')
+        self.db.commit()
+
+    def addMeasure(self, name, start, end):
+        self.db.execute('insert into measures values (?,?,?,?)', (None,self.userId(name),start,end))
+        self.db.commit()

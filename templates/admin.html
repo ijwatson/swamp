@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>Swamp Admin</title>
+  </head>
+  <body>
+    <h1>Swamp Admin</h1>
+    <button id="clear-current">Clear current</button> <br>
+    Sun Apr 21 13:02:31 2013<br>
+    Name: <input id="name" type="text" />
+    Start: <input id="start" type="text" />
+    End: <input id="end" type="text" />
+    <button id="add-measure">Add measure
+    </button>
+    <script src="/static/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+       $("#clear-current").click(function () {console.log('sending clear'); $.ajax({cache:false,url : '/admin?func=clear', 'type' : 'POST'});});
+       $("#add-measure").click(function () {$.ajax({cache:false,url : '/admin?func=add&name='+$("#name").val()+
+                                            '&start='+$("#start").val()+'&end='+$("#end").val(),
+                                            'type' : 'POST'});});
+      })
+    </script>
+  </body>
+</html>
