@@ -60,6 +60,14 @@ def status():
     nupdates += 1
     return ""
 
+@app.route('/info')
+def info():
+    db = DB()
+    name = request.args.get("name")
+    print 'info for', name
+    return encoder.encode({'name':name, 'measures':db.getMeasures(name)})
+    
+    
 @app.route('/login', methods=['POST'])
 def login():
     global nupdates

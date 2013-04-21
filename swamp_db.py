@@ -111,3 +111,7 @@ class DB:
     def addMeasure(self, name, start, end):
         self.db.execute('insert into measures values (?,?,?,?)', (None,self.userId(name),start,end))
         self.db.commit()
+
+    def getMeasures(self, name):
+        m = [a[0] for a in self.db.execute('select endTime from measures where userid=?', (self.userId(name),))]
+        return m

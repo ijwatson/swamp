@@ -6,6 +6,18 @@ window.onbeforeunload = function (evt) {
     $.ajax({cache:false,url : '/status?name='+name+'&status=0', 'type' : 'POST'});    
 };
 
+function getInfo(name) {
+    console.log('Getting info '+name);
+    $("#info").empty();
+    $.ajax({cache:false, url: '/info?name='+name, 'type' : 'GET',
+	    success: function (data) {
+		data = JSON.parse(data);
+		$("#info").append("<h1>"+data.name+"</h1>");
+		$.each(data.measures, function (i,d) {$("#info").append(d+"<br>");});
+	    }
+	   });
+}
+
 function updateView () {
     console.log("data updated");
     $("#data").empty();
@@ -15,10 +27,11 @@ function updateView () {
     var data = currentData;
     for (var i = 0; i < data.names.length; ++i) {
 	table.append('<tr class="' + (data.status[data.names[i]] ? 'active' : 'inactive') +
-		     '"><td>'+data.names[i]+'<td>' +
+		     '"><td class="flip" id="'+data.names[i]+'">'+data.names[i]+'<td>' +
 		     data.today[data.names[i]] + '<td>' +
 		     data.measures[data.names[i]] + '<td id="'+data.names[i]+'-current">' +
 		     tick2ms(data.current[data.names[i]]));
+	$("#"+data.names[i]).click((function (j) {return function () { getInfo(currentData.names[j]); };})(i));
     }
 }
 
@@ -45,7 +58,7 @@ function ticker () {
 
 document.getElementById("login").addEventListener("submit", function () {
     name = document.getElementById("login").elements["name"].value;
-    $.ajax({cache:false,url : '/login?name='+name, 'type' : 'POST'});    
+    $.ajax({cache:false,url : '/login?name='+name, 'type' : 'POST'});
     $("#login").remove();
     $("#login-name").append("Logged in as "+name);
     $("#work").append("    Are you working?\n"+
