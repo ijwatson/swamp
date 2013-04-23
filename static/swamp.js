@@ -22,15 +22,17 @@ function updateView () {
     console.log("data updated");
     $("#data").empty();
     $("#data").append("<table id='tab'></table>");
-    $("#tab").append("<tr><th>Name<th>Today<th>All<th>Current");
+    $("#tab").append("<tr><th>Name</th><th>Today</th><th>Week</th><th>All</th><th>Current</th></tr>");
     var table = $("#tab");
     var data = currentData;
     for (var i = 0; i < data.names.length; ++i) {
-	table.append('<tr class="' + (data.status[data.names[i]] ? 'active' : 'inactive') +
-		     '"><td class="flip" id="'+data.names[i]+'">'+data.names[i]+'<td>' +
-		     data.today[data.names[i]] + '<td>' +
-		     data.measures[data.names[i]] + '<td id="'+data.names[i]+'-current">' +
-		     tick2ms(data.current[data.names[i]]));
+	table.append('<tr class="' + (data.status[data.names[i]] ? 'active' : 'inactive') + '">' +
+	                 '<td class="flip" id="'+data.names[i]+'">'+data.names[i]+'</td>' +
+		             '<td>' + data.today[data.names[i]] + '</td>' +
+		             '<td>' + data.week[data.names[i]] + '</td>' +
+		             '<td>' + data.measures[data.names[i]] + '</td>' + 
+		             '<td id="'+data.names[i]+'-current">' + tick2ms(data.current[data.names[i]]) + '</td>' + 
+		         '</tr>');
 	$("#"+data.names[i]).click((function (j) {return function () { getInfo(currentData.names[j]); };})(i));
     }
 }

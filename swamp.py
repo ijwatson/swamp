@@ -24,11 +24,12 @@ encoder = json.JSONEncoder()
 def update():
     db = DB()
     names = db.getNames()
-    aj = { 'names' : names, 'measures' : {}, 'today' : {}, 'simple':'',
-           'current' : {}, 'status' : {} }
+    aj = { 'names' : names, 'measures' : {}, 'today' : {}, 'week' : {}, 'simple':'',
+           'current' : {}, 'status' : {}, 'achievements' : {} }
     for n in names:
         aj['measures'][n] = db.nMeasures(n)
         aj['today'][n] = db.nToday(n)
+        aj['week'][n] = db.nWeek(n)
         aj['current'][n] = db.currentTime(n)
         aj['status'][n] = db.status(n)
     return encoder.encode(aj)
