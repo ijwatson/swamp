@@ -104,7 +104,11 @@ class DB:
             return False
 
     def nToday(self, name):
-        times = [a[0] for a in self.db.execute('select startTime from measures where userId=?', (self.userId(name),)).fetchall()]
+        times = [a[0] for a in self.db.execute('select endTime from measures where userId=?', (self.userId(name),)).fetchall()]
+        return len(filter(istoday, times))
+
+    def nWeek(self, name):
+        times = [a[0] for a in self.db.execute('select endTime from measures where userId=?', (self.userId(name),)).fetchall()]
         return len(filter(istoday, times))
 
     def clearCurrent(self):
