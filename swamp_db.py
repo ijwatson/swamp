@@ -14,20 +14,82 @@ update = None
 def isweek(t):
     t = time.strptime(t)
     m = time.localtime()
+    return (t.tm_yday - t.tm_wday) == (m.tm_yday - m.tm_wday)
     
-
 def istoday(t):
     t = time.strptime(t)
     m = time.localtime()
     return t.tm_mon == m.tm_mon and t.tm_year == m.tm_year and t.tm_mday == m.tm_mday
+    
+class Achievement:
+    def __init__(self):
+        self.id = None
+        self.title = None
+        self.description = None
+        self.image = None
+    def dayStarted(self, db, name):
+        return False
+    def dayEnded(self, db, name):
+        return False
+    def weekStarted(self, db, name):
+        return False
+    def weekEnded(self, db, name):
+        return False
+    def measureStarted(self, db, name):
+        return False
+    def measureEnded(self, db, name):
+        return False
+    
+class PsGetDegrees(Achievement):
+    def __init__(self):
+        self.id = 0
+        self.title = "P's Get Degrees"
+        self.description = "You completed the minimum number of required measures for the day."
+        self.image = "pass-01.png"
+    def measureEnded(self, db, name):
+        return db.nToday(name) >= 4
+        
+class DayWinner(Achievement):
+    def __init__(self):
+        self.id = 1
+        self.title = ""
+        self.description = ""
+        self.image = ""
+    def dayEnded(self, db, name):
+        m = db.nToday(name)
+        for n in db.getNames():
+            if name != n and m > db.nToday(n):
+                return True
+        return False
+               
+class WeekWinner(Achievement):
+    def __init__(self):
+        self.id = 2
+        self.title = ""
+        self.description = ""
+        self.image = ""
+    def dayEnded(self, db, name):
+        m = db.nWeek(name)
+        for n in db.getNames():
+            if name != n and m > db.nWeek(n):
+                return True
+        return False
+                 
+Achievements = []
+Achievements.append(PsGetDegrees())
+Achievements.append(DayWinner())
+Achievements.append(WeekWinner())
 
 class DB:
-    
     def __init__(self, path=None):
         dbName = path if path else dbDefault
         if not os.path.exists(dbName):
             os.system('sqlite3 %s < setup.sql' % dbName)
         self.db = sqlite3.connect('%s' % dbName)
+        self.lastUpdateDay = time.localtime().tm_wday
+        #for name in self.getNames():
+        #    self.weekStarted(name)
+        #    self.dayStarted(name)
         
     def getNames(self):
         return [a[0] for a in self.db.execute('select name from users').fetchall()]
@@ -79,6 +141,7 @@ class DB:
             else:
                 print "not in curr", name
                 self.db.execute('insert into current values (?,?,?,?)', (self.userId(name),0,int(status),time.ctime()))
+                self.measureStarted(name)
             self.db.commit()
         except:
             print "No update", name, status
@@ -94,7 +157,17 @@ class DB:
                 self.db.execute('delete from current where userId=?', (uid,))
                 self.db.execute('insert into measures values (?,?,?,?)', (None,uid,stime,time.ctime()))
                 self.db.commit()
+                self.measureEnded(name)
                 updates = True
+        t = time.localtime().tm_wday
+        if t != self.lastUpdateDay:
+            for name in self.getNames():
+                self.dayEnded(name)
+                if t == 0:
+                    self.weekEnded(name)
+                    self.weekStarted(name)
+                self.dayStarted(name)
+        self.lastUpdateDay = t
         return updates
         
     def status(self, name):
@@ -122,3 +195,49 @@ class DB:
     def getMeasures(self, name):
         m = [a[0] for a in self.db.execute('select endTime from measures where userid=?', (self.userId(name),))]
         return m
+        
+    def nAchievements(self, name):
+        return 9
+        return len(self.db.execute("select achievement from achievements where userid=?", (self.userId(name),)).fetchall())
+        
+    def measureStarted(self, name):
+        return
+        for a in Achievements:
+            if a.measureStarted(self, name):
+                self.awardAchievement(name, a)
+        
+    def measureEnded(self, name):
+        return
+        for a in Achievements:
+            if a.measureEnded(self, name):
+                self.awardAchievement(name, a)
+        
+    def dayStarted(self, name):
+        return
+        for a in Achievements:
+            if a.dayStarted(self, name):
+                self.awardAchievement(name, a)
+        
+    def dayEnded(self, name):
+        return
+        for a in Achievements:
+            if a.dayEnded(self, name):
+                self.awardAchievement(name, a)
+        
+    def weekStarted(self, name):
+        return
+        for a in Achievements:
+            if a.weekStarted(self, name):
+                self.awardAchievement(name, a)
+        
+    def weekEnded(self, name):
+        return
+        for a in Achievements:
+            if a.weekEnded(self, name):
+                self.awardAchievement(name, a)
+        
+    def awardAchievement(self, name, achievement):
+        return
+        if len(self.db.execute("select achievement from achievements where userid=? and achievement=?", (self.userId(name),achievement.id)).fetchall()) == 0:
+            self.db.execute("insert into achievements values (?,?,?)", (self.userId(name), achievement.id, time.ctime()))
+            self.db.commit()
