@@ -24,9 +24,7 @@ function getInfo(name) {
 				 bars : {show : true,}}],// fill : true, steps : true}}],
 		       {xaxis: {
 			   mode: "time",
-			   //minTickSize: [1, "month"]
-			   //min: (new Date(2013, 1, 1)).getTime(),
-			   //max: (new Date(2014, 1, 1)).getTime()
+			   max: (new Date()).getTime()
 		       }});
 		//$("#info").append("<h1>"+data.name+"</h1>");
 		//$.each(data.measures, function (i,d) {$("#info").append(d+"<br>");});
