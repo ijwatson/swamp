@@ -1,6 +1,7 @@
 var subscription;
 var name;
 var currentData;
+var aData;
 
 window.onbeforeunload = function (evt) {
     $.ajax({cache:false,url : '/status?name='+name+'&status=0', 'type' : 'POST'});    
@@ -8,14 +9,33 @@ window.onbeforeunload = function (evt) {
 
 function getInfo(name) {
     console.log('Getting info '+name);
-    $("#info").empty();
+    $("#info").empty(); $('#kill').remove();
     $.ajax({cache:false, url: '/info?name='+name, 'type' : 'GET',
 	    success: function (data) {
 		data = JSON.parse(data);
-		$("#info").append("<h1>"+data.name+"</h1>");
-		$.each(data.measures, function (i,d) {$("#info").append(d+"<br>");});
+		aData = data;
+		$("#info").css("width", "500px");
+		$("#info").css("height", "250px");
+		mdates = []
+		for (var i = 0; i < data.measuredays.length; ++i) {
+		    mdates.push([new Date(data.measuredays[i][0][0], data.measuredays[i][0][1]-1, data.measuredays[i][0][2]).getTime(), data.measuredays[i][1]]);
+		}
+		$.plot("#info",[{data : mdates,
+				 bars : {show : true,}}],// fill : true, steps : true}}],
+		       {xaxis: {
+			   mode: "time",
+			   //minTickSize: [1, "month"]
+			   //min: (new Date(2013, 1, 1)).getTime(),
+			   //max: (new Date(2014, 1, 1)).getTime()
+		       }});
+		//$("#info").append("<h1>"+data.name+"</h1>");
+		//$.each(data.measures, function (i,d) {$("#info").append(d+"<br>");});
 	    }
 	   });
+    $("#data").append("<div id='kill'>Kill Plot</div>");
+    $('#kill').click(function () {$('#info').empty(); $('#kill').empty();});
+    $('#kill').addClass('flip');
+    $('#kill').css('width','500px');
 }
 
 function updateView () {
