@@ -2,10 +2,10 @@ import sqlite3
 import os
 import time
 
-dbDefault = "/sydpp/iwatson/db"
+dbDefault = "db"#"/sydpp/iwatson/db"
 
 # length of a measure in seconds
-measureLength = 30 * 60
+measureLength = 3#30 * 60
 
 # since the last global check
 updateCount = 0
@@ -195,6 +195,13 @@ class DB:
     def getMeasures(self, name):
         m = [a[0] for a in self.db.execute('select endTime from measures where userid=?', (self.userId(name),))]
         return m
+
+    def getMeasureDays(self, name):
+        measureList = sorted([(time.strptime(m.strip()).tm_year, time.strptime(m.strip()).tm_mon, time.strptime(m.strip()).tm_mday) for m in self.getMeasures(name)])
+        measures = []
+        for day in set(measureList):
+            measures.append([list(day), measureList.count(day)])
+        return sorted(measures)
         
     def nAchievements(self, name):
         return 9

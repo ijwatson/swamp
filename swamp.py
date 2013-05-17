@@ -66,7 +66,9 @@ def info():
     db = DB()
     name = request.args.get("name")
     print 'info for', name
-    return encoder.encode({'name':name, 'measures':db.getMeasures(name)})
+    return encoder.encode({'name':name,
+                           'measures':db.getMeasures(name),
+                           'measuredays':db.getMeasureDays(name)})
     
     
 @app.route('/login', methods=['POST'])
