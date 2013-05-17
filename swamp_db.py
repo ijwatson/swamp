@@ -182,7 +182,7 @@ class DB:
 
     def nWeek(self, name):
         times = [a[0] for a in self.db.execute('select endTime from measures where userId=?', (self.userId(name),)).fetchall()]
-        return len(filter(istoday, times))
+        return len(filter(isweek, times))
 
     def clearCurrent(self):
         self.db.execute('delete from current')
